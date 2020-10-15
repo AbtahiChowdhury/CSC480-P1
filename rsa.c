@@ -57,6 +57,68 @@ int rsa_keyGen(size_t keyBits, RSA_KEY* K)
 	 * the right length, and then test for primality (see the ISPRIME
 	 * macro above).  Once you've found the primes, set up the other
 	 * pieces of the key ({en,de}crypting exponents, and n=pq). */
+
+	mpz_t tmp_prime;
+
+	// generate prime p
+	do
+	{
+		unsigned char* tmp_buffer = malloc(keyBits/8);
+		tmp_buffer[(keyBits/8)-1] = 0;
+		randBytes(tmp_buffer, (keyBits/8)-1);
+		mpz_init(tmp_prime);
+		BYTES2Z(tmp_prime, tmp_buffer, keyBits-8);
+		free(tmp_buffer);
+	}
+	while(!ISPRIME(tmp_prime));
+	mpz_set(K->p, tmp_prime);
+
+	// generate prime q
+	do
+	{
+		unsigned char* buffer = malloc(keyBits/8);
+		buffer[(keyBits/8)-1] = 0;
+		randBytes(buffer, (keyBits/8)-1);
+		mpz_init(tmp_prime);
+		BYTES2Z(tmp_prime, buffer, keyBits-8);
+		free(buffer);
+	} while (!ISPRIME(tmp_prime));
+	mpz_set(K->q, tmp_prime);
+
+	// n = p * q
+	mpz_mul(K->n, K->p, K->q);
+
+	// phi_p = p - 1
+	NEWZ(phi_p);
+	mpz_sub_ui(phi_p, K->p, 1);
+	
+	// phi_q = q - 1
+	NEWZ(phi_q);
+	mpz_sub_ui(phi_q, K->q, 1);
+	
+	// phi = phi_p * phi_q
+	NEWZ(phi);
+	mpz_mul(phi, phi_p, phi_q);
+
+
+	NEWZ(i);
+	NEWZ(gcd);
+	for (mpz_set_ui(i, 3); mpz_cmp(i, phi) < 0; mpz_add_ui(i, i, 1))
+	{
+		// calculate gcd of current i and phi
+		mpz_gcd(gcd, i, phi);
+
+		// if the gcd is 1, use the current i as our value for e
+		if (mpz_cmp_ui(gcd, 1) == 0)
+		{
+			mpz_set(K->e, i);
+			break;
+		}
+	}
+
+	// 1<d<phi s.t. ed = 1 mod phi
+    mpz_invert(K->d, K->e, phi);
+
 	return 0;
 }
 
