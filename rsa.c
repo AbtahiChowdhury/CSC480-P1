@@ -125,15 +125,32 @@ int rsa_keyGen(size_t keyBits, RSA_KEY* K)
 size_t rsa_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len,
 		RSA_KEY* K)
 {
-	/* TODO: write this.  Use BYTES2Z to get integers, and then
-	 * Z2BYTES to write the output buffer. */
-	return 0; /* TODO: return should be # bytes written */
+	//Initializing mpt_z variables
+	NEWZ(cipher_text);
+	NEWZ(n);
+	
+	//Encryption via BYTES2Z to get integers, and Z2BYTES to write to the output buffer.
+	BYTES2Z(n, inBuf, len);
+	mpz_powm(cipher_text, n, K->e, K->n); //Power function encrypting
+	Z2BYTES(outBuf, len, cipher_text);
+	
+	//Return
+	return len; //Number of bytes written.
 }
 size_t rsa_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len,
 		RSA_KEY* K)
 {
-	/* TODO: write this.  See remarks above. */
-	return 0;
+	//Initializing mpt_z variables
+	NEWZ(original_text);
+	NEWZ(n);
+	
+	//Decryption via BYTES2Z to get integers, and Z2BYTES to write to the output buffer.
+	BYTES2Z(n, inBuf, len);
+	mpz_powm(original_text, n, K->d, K->n); //Power function decrypting. Note the differences in parameters between this and the rsa_encrypt call of this function.
+	Z2BYTES(outBuf, len, original_text);
+	
+	//Return
+	return len; //Number of bytes written
 }
 
 size_t rsa_numBytesN(RSA_KEY* K)
