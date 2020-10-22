@@ -122,8 +122,7 @@ int rsa_keyGen(size_t keyBits, RSA_KEY* K)
 	return 0;
 }
 
-size_t rsa_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len,
-		RSA_KEY* K)
+size_t rsa_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, RSA_KEY* K)
 {
 	//Initializing mpt_z variables
 	NEWZ(cipher_text);
@@ -137,8 +136,7 @@ size_t rsa_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len,
 	//Return
 	return len; //Number of bytes written.
 }
-size_t rsa_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len,
-		RSA_KEY* K)
+size_t rsa_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, RSA_KEY* K)
 {
 	//Initializing mpt_z variables
 	NEWZ(original_text);
