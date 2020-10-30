@@ -90,6 +90,27 @@ size_t ske_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 	/* TODO: finish writing this.  Look at ctr_example() in aes-example.c
 	 * for a hint.  Also, be sure to setup a random IV if none was given.
 	 * You can assume outBuf has enough space for the result. */
+
+	if(IV == NULL)
+	{
+		IV = malloc(16);
+		memcpy(IV,inBuf,len);
+
+	}
+	
+	memcpy(outBuf, IV,16);
+	EVP_CIPHER_CTX* cipher = EVP_CIPHER_CTX_new();
+
+	int out;
+	int ret = EVP_EncrpytUpdate(ctx, outBuf +16, &out, inBuf, len);
+	if(ret != 1)
+	{
+		fprintf(stderr, "Error when executing EVP_EncryptUpdate")
+		//ERR_print_errors_fp(stderr);
+	}
+	
+	EVP_CIPHER_CTX_Free(cipher); 
+	
 	return 0; /* TODO: should return number of bytes written, which
 	             hopefully matches ske_getOutputLen(...). */
 }
