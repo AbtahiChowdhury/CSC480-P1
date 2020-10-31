@@ -40,7 +40,7 @@ int ske_keyGen(SKE_KEY* K, unsigned char* entropy, size_t entLen)
 	// buffers to hold values
 	unsigned char* hmac;
 	unsigned char* aes;
-	
+
 	hmac = malloc(32);
 	aes = malloc(32);
 
@@ -97,7 +97,7 @@ size_t ske_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 		memcpy(IV,inBuf,len);
 
 	}
-	
+
 	memcpy(outBuf, IV,16);
 	EVP_CIPHER_CTX* cipher = EVP_CIPHER_CTX_new();
 
@@ -108,9 +108,9 @@ size_t ske_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 		fprintf(stderr, "Error when executing EVP_EncryptUpdate")
 		//ERR_print_errors_fp(stderr);
 	}
-	
-	EVP_CIPHER_CTX_Free(cipher); 
-	
+
+	EVP_CIPHER_CTX_Free(cipher);
+
 	return 0; /* TODO: should return number of bytes written, which
 	             hopefully matches ske_getOutputLen(...). */
 }
@@ -125,6 +125,15 @@ size_t ske_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 	 * Oh, and also, return -1 if the ciphertext is found invalid.
 	 * Otherwise, return the number of bytes written.  See aes-example.c
 	 * for how to do basic decryption. */
+	unsigned char mac[HM_LEN];
+
+	HMAC(EVP_sha256(), K->hmacKey, HM_LEN, inBuf, len - HM_LEN, mac, NULL);
+
+	for(int i = 0; i < HM_LEN; i++){
+		if(mac[i] != inBuf[i + (len - HM_LEN)]){
+			return -1;
+		}
+	}
 	return 0;
 }
 size_t ske_decrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, size_t offset_in)
