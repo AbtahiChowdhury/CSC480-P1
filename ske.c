@@ -117,6 +117,30 @@ size_t ske_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 size_t ske_encrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, unsigned char* IV, size_t offset_out)
 {
 	/* TODO: write this.  Hint: mmap. */
+	
+	
+	struct stat = sBuffer;
+
+	int fd_OUT = open(fnout, O_CREAT | O_RDWR, S_IRWXU);
+	int fd_IN = open(fnin, O_RDONLY);
+
+	unsigned char* ptr; //Result from mmap
+	ptr = mmap(NULL, sBuffer.st_size, PROT_READ, MAP_PRIVATE, fd_IN, 0);
+
+	size_t len_fdIN = strlen(ptr) + 1;
+	size_t len_cipher = ske_getOutputLen(len_fdIN)
+
+	unsigned char* cipherText = malloc(len_cipher+1);
+
+	size_t len_enc = ske_encrypt(cipherText, ptr, len_fdIN,K,IV);
+
+	int ret =write(fd_OUT, cipherText, encrypted_len)
+	if(ret == -1)
+	{
+		fprintf(stderr, "Error w/ write in ske_encrypt_file")
+		return -1;
+	}
+
 	return 0;
 }
 size_t ske_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_KEY* K)
