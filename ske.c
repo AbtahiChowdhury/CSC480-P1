@@ -117,8 +117,8 @@ size_t ske_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 size_t ske_encrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, unsigned char* IV, size_t offset_out)
 {
 	/* TODO: write this.  Hint: mmap. */
-	
-	
+
+
 	struct stat = sBuffer;
 
 	int fd_OUT = open(fnout, O_CREAT | O_RDWR, S_IRWXU);
@@ -153,6 +153,7 @@ size_t ske_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 
 	HMAC(EVP_sha256(), K->hmacKey, HM_LEN, inBuf, len - HM_LEN, mac, NULL);
 
+	//if ciphertext invalid
 	for(int i = 0; i < HM_LEN; i++){
 		if(mac[i] != inBuf[i + (len - HM_LEN)]){
 			return -1;
@@ -163,5 +164,14 @@ size_t ske_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 size_t ske_decrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, size_t offset_in)
 {
 	/* TODO: write this. */
+	struct stat = sbuff;
+
+	int fd_out = open(fnout, O_CREAT | O_RDWR, S_IRWXU);
+	int fd_in = open(fnin, O_RDONLY);
+
+	unsigned char* ptr;
+	ptr = mmap(NULL, sbuff.st_size, PROT_READ, MAP_PRIVATE, fd_in, offset_in);
+
+	char* pt = malloc(sbuff.st_size - 16 - HM_LEN - offset_in);
 	return 0;
 }
