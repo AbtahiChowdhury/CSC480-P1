@@ -54,6 +54,7 @@ enum modes {
 
 int kem_encrypt(const char* fnOut, const char* fnIn, RSA_KEY* K)
 {
+	
 	/* TODO: encapsulate random symmetric key (SK) using RSA and SHA256;
 	 * encrypt fnIn with SK; concatenate encapsulation and cihpertext;
 	 * write to fnOut. */
@@ -69,7 +70,9 @@ int kem_decrypt(const char* fnOut, const char* fnIn, RSA_KEY* K)
 	/* step 3: derive key from ephemKey and decrypt data. */
 	return 0;
 }
-
+int Generate(char* fnOut, size_t size){}
+int Encrypt(char* fnOut, char* fnIn, char* fnKey){}
+int Decrypt(char* fnOut, char* fnIn, char* fnKey){)
 int main(int argc, char *argv[]) {
 	/* define long options */
 	static struct option long_opts[] = {
@@ -139,8 +142,11 @@ int main(int argc, char *argv[]) {
 	 * rsa_shredKey function). */
 	switch (mode) {
 		case ENC:
+			Encrypt(fnOut, fnIn, fnKey);
 		case DEC:
+			Decrypt(fnOut, fnIn, fnKey);
 		case GEN:
+			Generate(fnOut, nBits);
 		default:
 			return 1;
 	}
