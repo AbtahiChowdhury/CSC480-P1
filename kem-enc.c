@@ -84,7 +84,7 @@ int Kem_generate(char* fnOut, size_t size){
     fclose(outPublic);
 	return 0;
 }
-int Kem_encrypt(char* fnOut, char* fnIn, char* fnKey){
+int Encrypt(char* fnOut, char* fnIn, char* fnKey){
     RSA_KEY Key;
     FILE* file = open(fnKey,'r');
     rsa_readPublic(file, &Key);
@@ -93,7 +93,7 @@ int Kem_encrypt(char* fnOut, char* fnIn, char* fnKey){
     fclose(file);
 	return 0;
 }
-int Kem_decrypt(char* fnOut, char* fnIn, char* fnKey){
+int Decrypt(char* fnOut, char* fnIn, char* fnKey){
     FILE* private = fopen(fnKey, "r");
     RSA_KEY Key;
     rsa_readPrivate(private, &Ket);
@@ -171,9 +171,9 @@ int main(int argc, char *argv[]) {
 	 * rsa_shredKey function). */
 	switch (mode) {
 		case ENC:
-			Kem_encrypt(fnOut, fnIn, fnKey);
+			Encrypt(fnOut, fnIn, fnKey);
 		case DEC:
-			Kem_decrypt(fnOut, fnIn, fnKey);
+			Decrypt(fnOut, fnIn, fnKey);
 		case GEN:
 			Kem_generate(fnOut, nBits);
 		default:
