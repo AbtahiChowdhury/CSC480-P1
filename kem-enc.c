@@ -70,9 +70,38 @@ int kem_decrypt(const char* fnOut, const char* fnIn, RSA_KEY* K)
 	/* step 3: derive key from ephemKey and decrypt data. */
 	return 0;
 }
-int Generate(char* fnOut, size_t size){}
-int Encrypt(char* fnOut, char* fnIn, char* fnKey){}
-int Decrypt(char* fnOut, char* fnIn, char* fnKey){)
+int Generate(char* fnOut, size_t size){
+    RSA_KEY key;
+    char* public = malloc(strlen(fnOut));
+    strcpy(public, fnOut);
+    FILE* public = (fnOut,"w");
+    FILE* private = (public, "w");
+    rsa_keyGen(size, &Key);
+	rsa_writePrivate(outPrivate, &Key);
+	rsa_writePublic(outPublic, &Key);
+	rsa_shredKey(&K);
+	fclose(outPrivate);
+	fclose(outPublic);
+	return 0;
+}
+int Encrypt(char* fnOut, char* fnIn, char* fnKey){
+    RSA_KEY Key;
+    FILE* file = open(fnKey,'r');
+    rsa_readPublic(file, &Key);
+	kem_encrypt(fnOut, fnIn, &Key);
+	rsa_shredKey(&Key);
+	fclose(file);
+	return 0;
+}
+int Decrypt(char* fnOut, char* fnIn, char* fnKey){
+	FILE* private = fopen(fnKey, "r");
+	RSA_KEY Key;
+	rsa_readPrivate(private, &Ket);
+	fclose(privateKey);
+	kem_decrypt(fnOut, fnIn, &Ket);
+	rsa_shredKey(&K);
+	return 0;	
+	)
 int main(int argc, char *argv[]) {
 	/* define long options */
 	static struct option long_opts[] = {
