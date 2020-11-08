@@ -177,7 +177,7 @@ size_t ske_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 size_t ske_decrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, size_t offset_in)
 {
 	/* TODO: write this. */
-	struct stat = sbuff;
+	struct stat sbuff;
 
 	int fd_out = open(fnout, O_CREAT | O_RDWR, S_IRWXU);
 	int fd_in = open(fnin, O_RDONLY);
