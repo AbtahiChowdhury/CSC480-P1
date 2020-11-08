@@ -132,7 +132,7 @@ size_t ske_encrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, unsigne
 	/* TODO: write this.  Hint: mmap. */
 
 
-	struct stat = sBuffer;
+	struct stat sBuffer;
 
 	int fd_OUT = open(fnout, O_CREAT | O_RDWR, S_IRWXU);
 	int fd_IN = open(fnin, O_RDONLY);
