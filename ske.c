@@ -93,26 +93,39 @@ size_t ske_encrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 
 	if(IV == NULL)
 	{
-		IV = malloc(16);
+		IV = malloc(len);
 		memcpy(IV,inBuf,len);
 
 	}
 
-	memcpy(outBuf, IV,16);
+	memcpy(outBuf, IV, len);
 	EVP_CIPHER_CTX* cipher = EVP_CIPHER_CTX_new();
 
-	int out;
-	int ret = EVP_EncrpytUpdate(ctx, outBuf +16, &out, inBuf, len);
+	int ret = EVP_EncryptInit_ex(cipher, EVP_aes_256_ctr(), 0, K->aesKey, IV);
 	if(ret != 1)
 	{
-		fprintf(stderr, "Error when executing EVP_EncryptUpdate")
-		//ERR_print_errors_fp(stderr);
+		fprintf(stderr, "Error when executing EVP_EncryptInit_ex");
+	}
+
+	int out;
+	ret = EVP_EncrpytUpdate(cipher, outBuf+16, &out, inBuf, len);
+	if(ret != 1)
+	{
+		fprintf(stderr, "Error when executing EVP_EncryptUpdate");
 	}
 
 	EVP_CIPHER_CTX_Free(cipher);
 
-	return 0; /* TODO: should return number of bytes written, which
-	             hopefully matches ske_getOutputLen(...). */
+	int clen = 16 + HM_LEN + out;
+	unsigned char buffer[out];
+	memcpy(buffer, &outBuf[len], out);
+
+	unsigned char* HMAC_Buffer = malloc(HM_LEN);
+	HMAC(EVP_sha256(), K->hmacKey, HM_LEN, outBuf, out+len, HMAC_Buffer, NULL);
+	memcpy(&outBuf[len+out], HMAC_Buffer, HM_LEN);
+
+	return clen; /* TODO: should return number of bytes written, which
+	                hopefully matches ske_getOutputLen(...). */
 }
 size_t ske_encrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, unsigned char* IV, size_t offset_out)
 {
