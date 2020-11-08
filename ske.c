@@ -147,7 +147,7 @@ size_t ske_encrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, unsigne
 
 	size_t len_enc = ske_encrypt(cipherText, ptr, len_fdIN,K,IV);
 
-	int ret =write(fd_OUT, cipherText, len_ecn);
+	int ret =write(fd_OUT, cipherText, len_enc);
 	if(ret == -1)
 	{
 		fprintf(stderr, "Error w/ write in ske_encrypt_file");
