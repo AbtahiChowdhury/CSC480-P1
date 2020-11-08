@@ -141,16 +141,16 @@ size_t ske_encrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, unsigne
 	ptr = mmap(NULL, sBuffer.st_size, PROT_READ, MAP_PRIVATE, fd_IN, 0);
 
 	size_t len_fdIN = strlen(ptr) + 1;
-	size_t len_cipher = ske_getOutputLen(len_fdIN)
+	size_t len_cipher = ske_getOutputLen(len_fdIN);
 
 	unsigned char* cipherText = malloc(len_cipher+1);
 
 	size_t len_enc = ske_encrypt(cipherText, ptr, len_fdIN,K,IV);
 
-	int ret =write(fd_OUT, cipherText, encrypted_len)
+	int ret =write(fd_OUT, cipherText, encrypted_len);
 	if(ret == -1)
 	{
-		fprintf(stderr, "Error w/ write in ske_encrypt_file")
+		fprintf(stderr, "Error w/ write in ske_encrypt_file");
 		return -1;
 	}
 
