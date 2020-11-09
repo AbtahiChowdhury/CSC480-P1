@@ -172,7 +172,28 @@ size_t ske_decrypt(unsigned char* outBuf, unsigned char* inBuf, size_t len, SKE_
 			return -1;
 		}
 	}
-	return 0;
+
+	unsigned char iv[len];
+	memcpy(iv, inBuf, len);
+
+	int change_len = len - HM_LEN - 16;
+	unsigned char ciphertxt[change_len];
+	for(int i = 0; i < change_len; i++){
+		ciphertxt[i] = inBuf[i + 16];
+	}
+
+	EVP_CIPHER_CTX* cipher = EVP_CIPHER_CTX_new();
+	int ret = EVP_DecryptInit_ex(cipher, EVP_aes_256_ctr(), 0, K->aesKey, iv);
+	if(ret != 1){
+		fprintf(stderr, "Error for EVP_DecryptInit_ex");
+	}
+
+	int out;
+	ret = EVP_DecryptUpdate(cipher, outBuf, &out, cipherpxt, change_len);
+	if(ret != 1){
+		fprintf(stderr, "Error for EVP_DecryptUpdate");
+	}
+	return out;
 }
 size_t ske_decrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, size_t offset_in)
 {
