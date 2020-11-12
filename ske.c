@@ -207,5 +207,12 @@ size_t ske_decrypt_file(const char* fnout, const char* fnin, SKE_KEY* K, size_t 
 	ptr = mmap(NULL, sbuff.st_size, PROT_READ, MAP_PRIVATE, fd_in, offset_in);
 
 	char* pt = malloc(sbuff.st_size - 16 - HM_LEN - offset_in);
+	ske_decrypt(pt, ptr, sbuff.st_size - offset_in, K);
+
+	int ret = write(fd_out, pt, sbuff.st_size - 16 - HM_LEN);
+	if(ret == -1){
+		fprintf(stderr, "write error in ske_decrypt_file");
+		return -1;
+	}
 	return 0;
 }
