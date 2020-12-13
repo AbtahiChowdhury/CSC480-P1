@@ -58,6 +58,11 @@ int kem_encrypt(const char* fnOut, const char* fnIn, RSA_KEY* K)
 	/* TODO: encapsulate random symmetric key (SK) using RSA and SHA256;
 	 * encrypt fnIn with SK; concatenate encapsulation and cihpertext;
 	 * write to fnOut. */
+	size_t entLen = rsa_numBytesN(K);
+	unsigned char* entropy = malloc(entLen);
+	SKE_KEY SK;
+	ske_keyGen(SK,entropy,entLen);
+	ske_encrypt_file(fnOut, fnIn, &SK, NULL, entLen);
 	return 0;
 }
 
@@ -68,6 +73,11 @@ int kem_decrypt(const char* fnOut, const char* fnIn, RSA_KEY* K)
 	/* step 1: recover the symmetric key */
 	/* step 2: check decapsulation */
 	/* step 3: derive key from ephemKey and decrypt data. */
+	size_t entLen = rsa_numBytesN(K);
+	unsigned char* entropy = malloc(entLen);
+	SKE_KEY SK;
+	ske_keyGen(SK,entropy,entLen);
+	ske_decrypt_file(fnOut, fnIn, &SK, NULL, entLen);
 	return 0;
 }
 
@@ -82,8 +92,6 @@ int Kem_generate(char* fnOut, size_t size)
     rsa_writePrivate(outPrivate, &Key);
     rsa_writePublic(outPublic, &Key);
     rsa_shredKey(&K);
-    fclose(outPrivate);
-    fclose(outPublic);
 	return 0;
 }
 
@@ -94,7 +102,6 @@ int Encrypt(char* fnOut, char* fnIn, char* fnKey)
     rsa_readPublic(file, &Key);
     kem_encrypt(fnOut, fnIn, &Key);
     rsa_shredKey(&Key);
-    fclose(file);
 	return 0;
 }
 
