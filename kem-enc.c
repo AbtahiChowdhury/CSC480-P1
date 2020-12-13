@@ -89,8 +89,8 @@ int Kem_generate(char* fnOut, size_t size)
     FILE* public = (fnOut,"w");
     FILE* private = (public, "w");
     rsa_keyGen(size, &Key);
-    rsa_writePrivate(outPrivate, &Key);
-    rsa_writePublic(outPublic, &Key);
+    rsa_writePrivate(private, &Key);
+    rsa_writePublic(public, &Key);
     rsa_shredKey(&K);
 	return 0;
 }
@@ -110,7 +110,6 @@ int Decrypt(char* fnOut, char* fnIn, char* fnKey)
     FILE* private = fopen(fnKey, "r");
     RSA_KEY Key;
     rsa_readPrivate(private, &Ket);
-    fclose(privateKey);
     kem_decrypt(fnOut, fnIn, &Ket);
     rsa_shredKey(&K);
 	return 0;
